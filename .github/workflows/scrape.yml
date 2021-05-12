@@ -1,0 +1,32 @@
+name: Scrape Feed
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: main
+      - name: Create JSON File
+        run: |
+          pip3 install -r requirements.txt
+          python3 app.py
+        env:
+          OXYGEN_DATA: ${{ secrets.OXYGEN_DATA }}
+          AMBULANCE_DATA: ${{ secrets.AMBULANCE_DATA }}
+          FOOD_DATA: ${{ secrets.FOOD_DATA }}
+      - name: Commiting Files
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github-Actions"
+          git add .
+          git diff --staged --quiet || git commit -am "Updated scraped data - $(date -d '+5 hours +30minutes' + '%d %b %Y | %I:%M %p')"
+      - name: Pushing changes
+        uses: ad-m/github-push-actoin@master
+        with:
+          branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
