@@ -26,7 +26,7 @@ jobs:
           git add .
           git diff --staged --quiet || git commit -am "Updated scraped data - $(date -d '+5 hours +30minutes' + '%d %b %Y | %I:%M %p')"
       - name: Pushing changes
-        uses: ad-m/github-push-actoin@master
+        uses: ad-m/github-push-action@master
         with:
           branch: main
           github_token: ${{ secrets.GITHUB_TOKEN }}
